@@ -25,3 +25,5 @@ Thumbs.db
 .env
 *.env
 *.zip
+monitoring/logs/*.csv
+monitoring/logs/*.csv

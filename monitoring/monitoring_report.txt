@@ -1,0 +1,19 @@
+CREDIT CARD FRAUD MODEL MONITORING REPORT
+=========================================
+
+Total predictions: 3
+Legitimate predictions: 1
+Fraud predictions: 2
+
+Observed fraud prediction rate: 66.6667%
+Training fraud baseline: 0.1726%
+Average fraud probability: 0.666569
+
+Monitoring status:
+ALERT: Prediction distribution should be reviewed.
+
+Note:
+Prediction-rate monitoring is an operational signal and does not
+by itself prove feature drift or model performance degradation.
+Confirmed labels are required to calculate production precision,
+recall, F1 score, and other supervised performance metrics.

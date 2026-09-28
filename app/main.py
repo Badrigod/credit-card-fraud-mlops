@@ -1,4 +1,6 @@
+from datetime import datetime, timezone
 from pathlib import Path
+import csv
 
 import joblib
 import numpy as np
@@ -10,6 +12,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 MODEL_PATH = BASE_DIR / "models" / "xgboost_fraud_model_tuned.pkl"
 SCALER_PATH = BASE_DIR / "models" / "scaler.pkl"
+
+LOG_DIR = BASE_DIR / "monitoring" / "logs"
+LOG_FILE = LOG_DIR / "prediction_log.csv"
 
 FEATURE_COLUMNS = [
     "Time",
@@ -25,6 +30,9 @@ FEATURE_COLUMNS = [
 model = joblib.load(MODEL_PATH)
 scaler = joblib.load(SCALER_PATH)
 
+# Create monitoring directory if it does not exist
+LOG_DIR.mkdir(parents=True, exist_ok=True)
+
 app = FastAPI(
     title="Credit Card Fraud Detection API",
     description=(
@@ -38,10 +46,32 @@ app = FastAPI(
 class Transaction(BaseModel):
     features: list[float] = Field(
         ...,
-        description=(
-            "30 values ordered as Time, V1-V28, Amount"
-        )
+        description="30 values ordered as Time, V1-V28, Amount"
     )
+
+
+def log_prediction(prediction: int, probability: float):
+    """Write prediction information to the monitoring log."""
+
+    file_exists = LOG_FILE.exists()
+
+    with LOG_FILE.open("a", newline="", encoding="utf-8") as file:
+        writer = csv.writer(file)
+
+        if not file_exists:
+            writer.writerow([
+                "timestamp",
+                "prediction",
+                "class_name",
+                "fraud_probability"
+            ])
+
+        writer.writerow([
+            datetime.now(timezone.utc).isoformat(),
+            prediction,
+            "fraud" if prediction == 1 else "legitimate",
+            round(probability, 6)
+        ])
 
 
 @app.get("/")
@@ -102,8 +132,7 @@ def predict(transaction: Transaction):
         columns=FEATURE_COLUMNS
     )
 
-    # Apply the same preprocessing used during training.
-    # The scaler was fitted only on Time and Amount.
+    # Apply the same preprocessing used during training
     data.loc[:, ["Time", "Amount"]] = scaler.transform(
         data[["Time", "Amount"]]
     )
@@ -113,6 +142,9 @@ def predict(transaction: Transaction):
     probability = float(
         model.predict_proba(data)[0][1]
     )
+
+    # Store prediction metadata for monitoring
+    log_prediction(prediction, probability)
 
     return {
         "prediction": prediction,
