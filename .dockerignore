@@ -1,0 +1,14 @@
+venv/
+.venv/
+.git/
+.github/
+.pytest_cache/
+__pycache__/
+*.pyc
+data/
+reports/
+tests/
+src/
+creditcard.csv.zip
+*.zip
+.env
