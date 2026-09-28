@@ -1,0 +1,54 @@
+name: Credit Card Fraud MLOps CD
+
+on:
+  workflow_run:
+    workflows:
+      - "Credit Card Fraud MLOps CI"
+    types:
+      - completed
+    branches:
+      - main
+
+jobs:
+  staging:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build staging Docker image
+        run: |
+          docker build -t credit-card-fraud-api:staging .
+
+      - name: Start staging container
+        run: |
+          docker run -d \
+            --name fraud-api-staging \
+            -p 8000:8000 \
+            credit-card-fraud-api:staging
+
+      - name: Wait for API
+        run: |
+          for i in {1..30}; do
+            if curl --fail http://127.0.0.1:8000/health; then
+              exit 0
+            fi
+            sleep 2
+          done
+          docker logs fraud-api-staging
+          exit 1
+
+      - name: Test staging health endpoint
+        run: |
+          curl --fail http://127.0.0.1:8000/health
+
+      - name: Show container status
+        run: |
+          docker ps
+
+      - name: Stop staging container
+        if: always()
+        run: |
+          docker rm -f fraud-api-staging || true
