@@ -1,0 +1,25 @@
+Final XGBoost Credit Card Fraud Detection Results
+=======================================================
+
+Test samples: 56962
+Legitimate: 56863
+Fraud: 99
+
+Precision: 0.8817
+Recall: 0.8283
+F1 Score: 0.8542
+ROC-AUC: 0.9804
+
+Confusion Matrix:
+[[56852    11]
+ [   17    82]]
+
+Classification Report:
+              precision    recall  f1-score   support
+
+           0     0.9997    0.9998    0.9998     56863
+           1     0.8817    0.8283    0.8542        99
+
+    accuracy                         0.9995     56962
+   macro avg     0.9407    0.9140    0.9270     56962
+weighted avg     0.9995    0.9995    0.9995     56962

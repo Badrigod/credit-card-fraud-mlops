@@ -1,0 +1,32 @@
+XGBoost Hyperparameter Tuning Results
+==================================================
+
+Best Parameters:
+subsample: 0.8
+n_estimators: 300
+min_child_weight: 5
+max_depth: 7
+learning_rate: 0.05
+colsample_bytree: 1.0
+
+Best CV ROC-AUC: 0.9788
+
+Validation Results:
+Precision: 0.8352
+Recall: 0.7755
+F1 Score: 0.8042
+ROC-AUC: 0.9842
+
+Confusion Matrix:
+[[56848    15]
+ [   22    76]]
+
+Classification Report:
+              precision    recall  f1-score   support
+
+           0     0.9996    0.9997    0.9997     56863
+           1     0.8352    0.7755    0.8042        98
+
+    accuracy                         0.9994     56961
+   macro avg     0.9174    0.8876    0.9020     56961
+weighted avg     0.9993    0.9994    0.9993     56961
