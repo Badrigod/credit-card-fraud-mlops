@@ -1,0 +1,32 @@
+name: Model Monitoring Check
+
+on:
+  workflow_dispatch:
+
+jobs:
+  monitoring-check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pandas
+
+      - name: Verify monitoring scripts
+        run: |
+          python -m py_compile monitoring/monitor.py
+          python -m py_compile monitoring/check_retraining.py
+
+      - name: Retraining policy
+        run: |
+          echo "Monitoring validation completed."
+          echo "Retraining requires sufficient production observations and approved training data."

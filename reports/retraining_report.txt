@@ -1,0 +1,16 @@
+AUTOMATED RETRAINING REPORT
+===========================
+
+Candidate model validation results:
+
+Precision: 0.8352
+Recall: 0.7755
+F1 Score: 0.8042
+ROC-AUC: 0.9842
+
+Candidate model:
+xgboost_fraud_model_candidate.pkl
+
+Status:
+Candidate model created successfully.
+Production promotion requires validation before replacement.
